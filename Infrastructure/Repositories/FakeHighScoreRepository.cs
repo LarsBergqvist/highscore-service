@@ -1,10 +1,11 @@
 ﻿using Core.Models;
+using Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Core.Repositories
+namespace Infrastructure.Repositories
 {
     public class FakeHighScoreRepository : IHighScoreRepository
     {
@@ -13,9 +14,9 @@ namespace Core.Repositories
         {
             _highScoreLists = new List<HighScoreList>();
             _highScoreLists.Add(new HighScoreList(
-                Guid.Parse("2252925F-95FB-40EE-9912-039657B6F57D"),
+                "1",
                 "Sliding Image Puzzle 3x3 High Score List",
-                true, 3
+                true, "Moves", 3
                 )
             {
                 Results = new List<GameResult> {
@@ -27,7 +28,7 @@ namespace Core.Repositories
 
         }
 
-        public Task AddGameResultToHighScoreList(Guid highScoreListId, GameResult gameResult)
+        public Task AddGameResultToHighScoreList(string highScoreListId, GameResult gameResult)
         {
             var list = _highScoreLists.FirstOrDefault(h => h.Id == highScoreListId);
             if (list == null)
@@ -41,11 +42,11 @@ namespace Core.Repositories
             IList<GameResult> updatedResults;
             if (list.LowIsBest)
             {
-                updatedResults = results.Select(c => c).OrderBy(c => c.Result).Take(list.MaxSize).ToList();
+                updatedResults = results.Select(c => c).OrderBy(c => c.Score).Take(list.MaxSize).ToList();
             }
             else
             {
-                updatedResults = results.Select(c => c).OrderByDescending(c => c.Result).Take(list.MaxSize).ToList();
+                updatedResults = results.Select(c => c).OrderByDescending(c => c.Score).Take(list.MaxSize).ToList();
             }
 
             list.Results = updatedResults;
@@ -54,8 +55,8 @@ namespace Core.Repositories
 
         public Task<HighScoreList> CreateHighScoreList(HighScoreListInput input)
         {
-            var id = Guid.NewGuid();
-            var highScoreList = new HighScoreList(id, input.Name, input.LowIsBest, input.MaxSize);
+            var id = (_highScoreLists.Count + 1).ToString();
+            var highScoreList = new HighScoreList(id, input.Name, input.LowIsBest, input.Unit, input.MaxSize);
             _highScoreLists.Add(highScoreList);
             return Task.FromResult(highScoreList);
         }
@@ -66,7 +67,7 @@ namespace Core.Repositories
             return Task.FromResult(result);
         }
 
-        public Task<HighScoreList> GetHighScoreList(Guid highScoreListId)
+        public Task<HighScoreList> GetHighScoreList(string highScoreListId)
         {
             return Task.FromResult(_highScoreLists.FirstOrDefault(h => h.Id == highScoreListId));
         }

@@ -4,15 +4,15 @@ namespace Core.Models
 {
     public class GameResult
     {
-        public GameResult(string userName, int result)
+        public GameResult(string userName, int score)
         {
             UserName = userName;
-            Result = result;
+            Score = score;
         }
 
         [Required]
         public string UserName { get; init; }
         [Required]
-        public int Result { get; init; }
+        public int Score { get; init; }
     }
 }

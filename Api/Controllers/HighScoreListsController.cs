@@ -32,7 +32,7 @@ namespace Api.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(HighScoreList), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult<HighScoreList>> GetById(Guid id)
+        public async Task<ActionResult<HighScoreList>> GetById(string id)
         {
             var result = await _mediator.Send(new GetHighScoreListById.Request(id));
             if (result == null)
@@ -45,9 +45,9 @@ namespace Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("{id}/game-results")]
-        public async Task<ActionResult> AddGameResult(Guid id, [FromBody] GameResult gameResult)
+        public async Task<ActionResult> AddGameResult(string id, [FromBody] GameResult gameResult)
         {
-            var result = await _mediator.Send(new AddGameResult.Request(id, gameResult.UserName, gameResult.Result));
+            var result = await _mediator.Send(new AddGameResult.Request(id, gameResult));
             if (result.NoMatchingListId)
             {
                 return BadRequest($"The high score list with id '{id}' does not exist");

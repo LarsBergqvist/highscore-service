@@ -1,5 +1,6 @@
 ﻿using Core;
 using Core.Repositories;
+using Infrastructure.Repositories;
 using System;
 
 namespace ConsoleTest

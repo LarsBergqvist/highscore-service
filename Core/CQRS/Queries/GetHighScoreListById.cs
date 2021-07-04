@@ -11,8 +11,8 @@ namespace Core.CQRS.Queries
     {
         public class Request: IRequest<HighScoreList>
         {
-            public Request(Guid id) => Id = id;
-            public Guid Id { get; init; }
+            public Request(string id) => Id = id;
+            public string Id { get; init; }
         }
 
         public class Handler : IRequestHandler<Request, HighScoreList>

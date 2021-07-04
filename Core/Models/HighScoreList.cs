@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Core.Models
 {
     public class HighScoreList
     {
-        public HighScoreList(Guid id, string name, bool lowIsBest, int maxSize)
+        public HighScoreList(string id, string name, bool lowIsBest, string unit, int maxSize)
         {
             Id = id;
             Name = name;
             Results = new List<GameResult>();
             LowIsBest = lowIsBest;
             MaxSize = maxSize;
+            Unit = unit;
         }
 
-        public Guid Id { get; }
+        public string Id { get; }
         public string Name { get; }
         public IList<GameResult> Results { get; set; }
         public bool LowIsBest { get; }
         public int MaxSize { get; }
+        public string Unit { get; }
 
     }
 }

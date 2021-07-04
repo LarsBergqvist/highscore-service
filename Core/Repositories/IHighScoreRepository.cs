@@ -9,8 +9,8 @@ namespace Core.Repositories
     public interface IHighScoreRepository
     {
         Task<IEnumerable<HighScoreList>> GetAllHighScoreLists();
-        Task<HighScoreList> GetHighScoreList(Guid highScoreListId);
+        Task<HighScoreList> GetHighScoreList(string highScoreListId);
         Task<HighScoreList> CreateHighScoreList(HighScoreListInput highScoreListInput);
-        Task AddGameResultToHighScoreList(Guid highScoreListId, GameResult gameResult);
+        Task AddGameResultToHighScoreList(string highScoreListId, GameResult gameResult);
     }
 }

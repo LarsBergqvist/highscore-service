@@ -1,9 +1,7 @@
-﻿using Core.Repositories;
+﻿using Core.Models;
+using Core.Repositories;
 using MediatR;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,15 +17,13 @@ namespace Core.CQRS.Commands
 
         public class Request : IRequest<Response>
         {
-            public Request(Guid highScoreListId, string userName, int result)
+            public Request(string highScoreListId, GameResult gameResult)
             {
                 HighScoreListId = highScoreListId;
-                UserName = userName;
-                Result = result;
+                GameResult = gameResult;
             }
-            public Guid HighScoreListId { get; init; }
-            public string UserName { get; init; }
-            public int Result { get; init; }
+            public string HighScoreListId { get; init; }
+            public GameResult GameResult { get; init; }
         }
 
         public class Handler : IRequestHandler<Request, Response>
@@ -45,7 +41,7 @@ namespace Core.CQRS.Commands
                 {
                     return new Response { NoMatchingListId = true };
                 }
-                await _repository.AddGameResultToHighScoreList(request.HighScoreListId, new Models.GameResult(request.UserName, request.Result));
+                await _repository.AddGameResultToHighScoreList(request.HighScoreListId, request.GameResult);
                 return new Response { NoMatchingListId = false };
             }
         }
