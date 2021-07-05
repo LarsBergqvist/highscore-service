@@ -54,6 +54,7 @@ namespace Api.Controllers
             return Ok();
         }
 
+#if DEBUG
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
@@ -62,6 +63,6 @@ namespace Api.Controllers
             var result = await _mediator.Send(new CreateHighScoreList.Request(input));
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
-
+#endif
     }
 }

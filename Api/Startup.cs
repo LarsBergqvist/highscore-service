@@ -1,3 +1,4 @@
+using Api.Middleware;
 using Core.Extensions;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +40,26 @@ namespace Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
+
+#if !DEBUG
+                c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme()
+                {
+                    Type = SecuritySchemeType.ApiKey,
+                    In = ParameterLocation.Header,
+                    Name = "ApiKey",
+                    Description = "ApiKey for authorization",
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "ApiKey" }
+                        },
+                        new string[] { }
+                    }
+                });
+#endif
             });
         }
 
@@ -48,15 +69,22 @@ namespace Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1"));
+//                app.UseSwagger();
+//                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1"));
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1"));
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
+
+#if !DEBUG
+            app.UseMiddleware<ApiKeyMiddleware>();
+#endif
 
             app.UseCors(CorsPolicy);
 
