@@ -2,7 +2,7 @@
 
 namespace Core.Models
 {
-    public class HighScoreListInput
+    public class HighScoreListWriteModel
     {
         [Required]
         public string Name { get; init; }

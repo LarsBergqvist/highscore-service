@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Core.Models
 {
-    public class HighScoreList
+    public class HighScoreListReadModel
     {
-        public HighScoreList(string id, string name, bool lowIsBest, string unit, int maxSize)
+        public HighScoreListReadModel(string id, string name, bool lowIsBest, string unit, int maxSize)
         {
             Id = id;
             Name = name;

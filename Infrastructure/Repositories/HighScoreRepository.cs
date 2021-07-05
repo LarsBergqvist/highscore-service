@@ -2,6 +2,7 @@
 using Core.Repositories;
 using Core.Settings;
 using Infrastructure.MongoDB;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -18,8 +19,10 @@ namespace Infrastructure.Repositories
     {
         private readonly IMongoDBContext _mongoDBContext;
         private readonly RepositorySettings _settings;
-        public HighScoreRepository(IOptions<RepositorySettings> options, IMongoDBContext mongoDBContext)
+        private readonly ILogger<HighScoreRepository> _logger;
+        public HighScoreRepository(ILogger<HighScoreRepository> logger, IOptions<RepositorySettings> options, IMongoDBContext mongoDBContext)
         {
+            _logger = logger;
             _settings = options.Value;
             _mongoDBContext = mongoDBContext;
         }
@@ -33,6 +36,11 @@ namespace Infrastructure.Repositories
                 return;
             }
 
+            gameResult.UtcDateTime = DateTime.Now.ToUniversalTime();
+
+            //
+            // Add the new result and create a new sorted result list limited to MaxSize
+            //
             var results = list.Results;
             list.Results.Add(gameResult);
 
@@ -62,48 +70,46 @@ namespace Infrastructure.Repositories
             }
             catch (Exception e)
             {
-//                _logger.LogError(e.ToString());
-                throw (e);
+                _logger.LogError(e.ToString());
+                throw;
             }
         }
 
-        public async Task<HighScoreList> CreateHighScoreList(HighScoreListInput input)
+        public async Task<HighScoreListReadModel> CreateHighScoreList(HighScoreListWriteModel input)
         {
             var collection = GetCollection();
             var objId = ObjectId.GenerateNewId();
             var dbModel = new HighScoreListDBModel(objId, input.Name, input.LowIsBest, input.Unit, input.MaxSize);
                 await collection.InsertOneAsync(dbModel);
 
-            var highScoreList = new HighScoreList(objId.ToString(), input.Name, input.LowIsBest, input.Unit, input.MaxSize);
+            var highScoreList = new HighScoreListReadModel(objId.ToString(), input.Name, input.LowIsBest, input.Unit, input.MaxSize);
 
             return highScoreList;
         }
 
-        public async Task<IEnumerable<HighScoreList>> GetAllHighScoreLists()
+        public async Task<IEnumerable<HighScoreListReadModel>> GetAllHighScoreLists()
         {
             try
             {
                 var collection = GetCollection();
                 var filter = Builders<HighScoreListDBModel>.Filter.Ne("Type", "Övrigt");
                 var asyncCursor = await collection.FindAsync<HighScoreListDBModel>(filter);
-                var result = asyncCursor.ToEnumerable<HighScoreListDBModel>();
-                var list = new List<HighScoreList>();
+                var result = asyncCursor.ToEnumerable();
+                var list = new List<HighScoreListReadModel>();
                 foreach(var res in result)
                 {
-                    var l = new HighScoreList(res.Id.ToString(), res.Name, res.LowIsBest,res.Unit, res.MaxSize);
-                    l.Results = res.Results;
-                    list.Add(l);
+                    list.Add(res.ToReadModel());
                 }
                 return list;
             }
             catch (Exception e)
             {
-//                _logger.LogError(e.ToString());
-                throw (e);
+                _logger.LogError(e.ToString());
+                throw;
             }
         }
 
-        public async Task<HighScoreList> GetHighScoreList(string highScoreListId)
+        public async Task<HighScoreListReadModel> GetHighScoreList(string highScoreListId)
         {
             try
             {
@@ -115,15 +121,12 @@ namespace Infrastructure.Repositories
                 {
                     return null;
                 }
-                var res = result[0];
-                var l = new HighScoreList(res.Id.ToString(), res.Name, res.LowIsBest, res.Unit, res.MaxSize);
-                l.Results = res.Results;
-                return l;
+                return result[0].ToReadModel();
             }
             catch (Exception e)
             {
-//                _logger.LogError(e.ToString());
-                throw (e);
+                _logger.LogError(e.ToString());
+                throw;
             }
         }
 

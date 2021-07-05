@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Core.Models
 {
@@ -14,5 +15,6 @@ namespace Core.Models
         public string UserName { get; init; }
         [Required]
         public int Score { get; init; }
+        public DateTime UtcDateTime { get; set; }
     }
 }

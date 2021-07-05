@@ -8,8 +8,8 @@ namespace Core.Extensions
         public static IServiceCollection AddCoreServices(this IServiceCollection services)
         {
             return services
-                      .AddMediatR(typeof(Core.AssemblyClass))
-                  ;
+                      .AddMediatR(typeof(ServiceCollectionExtension));
+            ;
         }
     }
 }

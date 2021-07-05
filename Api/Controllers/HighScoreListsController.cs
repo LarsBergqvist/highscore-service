@@ -4,7 +4,6 @@ using Core.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -24,15 +23,15 @@ namespace Api.Controllers
 
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<HighScoreList>>> GetAll()
+        public async Task<ActionResult<IEnumerable<HighScoreListReadModel>>> GetAll()
         {
             return Ok(await _mediator.Send(new GetAllHighScoreLists.Request()));
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(HighScoreList), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(HighScoreListReadModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult<HighScoreList>> GetById(string id)
+        public async Task<ActionResult<HighScoreListReadModel>> GetById(string id)
         {
             var result = await _mediator.Send(new GetHighScoreListById.Request(id));
             if (result == null)
@@ -58,7 +57,7 @@ namespace Api.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
-        public async Task<ActionResult<HighScoreList>> CreateHighScoreList([FromBody] HighScoreListInput input)
+        public async Task<ActionResult<HighScoreListReadModel>> CreateHighScoreList([FromBody] HighScoreListWriteModel input)
         {
             var result = await _mediator.Send(new CreateHighScoreList.Request(input));
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);

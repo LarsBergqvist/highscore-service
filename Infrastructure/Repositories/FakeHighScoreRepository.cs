@@ -9,11 +9,11 @@ namespace Infrastructure.Repositories
 {
     public class FakeHighScoreRepository : IHighScoreRepository
     {
-        private List<HighScoreList> _highScoreLists;
+        private List<HighScoreListReadModel> _highScoreLists;
         public FakeHighScoreRepository()
         {
-            _highScoreLists = new List<HighScoreList>();
-            _highScoreLists.Add(new HighScoreList(
+            _highScoreLists = new List<HighScoreListReadModel>();
+            _highScoreLists.Add(new HighScoreListReadModel(
                 "1",
                 "Sliding Image Puzzle 3x3 High Score List",
                 true, "Moves", 3
@@ -53,21 +53,21 @@ namespace Infrastructure.Repositories
             return Task.CompletedTask;
         }
 
-        public Task<HighScoreList> CreateHighScoreList(HighScoreListInput input)
+        public Task<HighScoreListReadModel> CreateHighScoreList(HighScoreListWriteModel input)
         {
             var id = (_highScoreLists.Count + 1).ToString();
-            var highScoreList = new HighScoreList(id, input.Name, input.LowIsBest, input.Unit, input.MaxSize);
+            var highScoreList = new HighScoreListReadModel(id, input.Name, input.LowIsBest, input.Unit, input.MaxSize);
             _highScoreLists.Add(highScoreList);
             return Task.FromResult(highScoreList);
         }
 
-        public Task<IEnumerable<HighScoreList>> GetAllHighScoreLists()
+        public Task<IEnumerable<HighScoreListReadModel>> GetAllHighScoreLists()
         {
             var result = _highScoreLists.AsEnumerable();
             return Task.FromResult(result);
         }
 
-        public Task<HighScoreList> GetHighScoreList(string highScoreListId)
+        public Task<HighScoreListReadModel> GetHighScoreList(string highScoreListId)
         {
             return Task.FromResult(_highScoreLists.FirstOrDefault(h => h.Id == highScoreListId));
         }

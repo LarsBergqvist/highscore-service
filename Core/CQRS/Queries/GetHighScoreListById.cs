@@ -9,13 +9,13 @@ namespace Core.CQRS.Queries
 {
     public class GetHighScoreListById
     {
-        public class Request: IRequest<HighScoreList>
+        public class Request: IRequest<HighScoreListReadModel>
         {
             public Request(string id) => Id = id;
             public string Id { get; init; }
         }
 
-        public class Handler : IRequestHandler<Request, HighScoreList>
+        public class Handler : IRequestHandler<Request, HighScoreListReadModel>
         {
             private readonly IHighScoreRepository _repository;
             public Handler(IHighScoreRepository repository)
@@ -23,7 +23,7 @@ namespace Core.CQRS.Queries
                 _repository = repository;
             }
 
-            public async Task<HighScoreList> Handle(Request request, CancellationToken cancellationToken)
+            public async Task<HighScoreListReadModel> Handle(Request request, CancellationToken cancellationToken)
             {
                 return await _repository.GetHighScoreList(request.Id);
             }
