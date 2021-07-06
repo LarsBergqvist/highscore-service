@@ -11,7 +11,7 @@ namespace Core.Models
         [Required]
         public string Unit { get; init; }
         [Required]
-        [Range(1, 10)]
+        [Range(1, 25)]
         public int MaxSize { get; init; }
     }
 }

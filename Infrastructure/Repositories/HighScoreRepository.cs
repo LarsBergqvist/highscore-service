@@ -13,8 +13,6 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-
-
     public class HighScoreRepository : IHighScoreRepository
     {
         private readonly IMongoDBContext _mongoDBContext;
@@ -27,7 +25,6 @@ namespace Infrastructure.Repositories
             _mongoDBContext = mongoDBContext;
         }
 
-        // 60e183b7ef1e0c7c557fd690
         public async Task AddGameResultToHighScoreList(string highScoreListId, GameResult gameResult)
         {
             var list = await GetHighScoreList(highScoreListId);
@@ -37,6 +34,7 @@ namespace Infrastructure.Repositories
             }
 
             gameResult.UtcDateTime = DateTime.Now.ToUniversalTime();
+            gameResult.Id ??= Guid.NewGuid().ToString();
 
             //
             // Add the new result and create a new sorted result list limited to MaxSize
@@ -111,10 +109,14 @@ namespace Infrastructure.Repositories
 
         public async Task<HighScoreListReadModel> GetHighScoreList(string highScoreListId)
         {
+            if (!ObjectId.TryParse(highScoreListId, out ObjectId filterObjectId))
+            {
+                return null;
+            }
             try
             {
                 var collection = GetCollection();
-                var filter = Builders<HighScoreListDBModel>.Filter.Eq("_id", new ObjectId(highScoreListId));
+                var filter = Builders<HighScoreListDBModel>.Filter.Eq("_id", filterObjectId);
                 var asyncCursor = await collection.FindAsync<HighScoreListDBModel>(filter);
                 var result = asyncCursor.ToList();
                 if (result.Count == 0)

@@ -16,5 +16,6 @@ namespace Core.Models
         [Required]
         public int Score { get; init; }
         public DateTime UtcDateTime { get; set; }
+        public string Id { get; set; }
     }
 }
