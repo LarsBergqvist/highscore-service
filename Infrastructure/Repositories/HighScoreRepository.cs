@@ -45,11 +45,11 @@ namespace Infrastructure.Repositories
             IList<GameResult> updatedResults;
             if (list.LowIsBest)
             {
-                updatedResults = results.Select(c => c).OrderBy(c => c.Score).Take(list.MaxSize).ToList();
+                updatedResults = results.Select(c => c).OrderBy(c => c.Score).ThenByDescending(c => c.UtcDateTime).Take(list.MaxSize).ToList();
             }
             else
             {
-                updatedResults = results.Select(c => c).OrderByDescending(c => c.Score).Take(list.MaxSize).ToList();
+                updatedResults = results.Select(c => c).OrderByDescending(c => c.Score).ThenByDescending(c => c.UtcDateTime).Take(list.MaxSize).ToList();
             }
 
             list.Results = updatedResults;
