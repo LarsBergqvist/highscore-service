@@ -12,6 +12,7 @@ namespace Core.Models
         }
 
         [Required]
+        [StringLength(25, MinimumLength = 3, ErrorMessage = "The {0} value must be between 3 and 25 characters.")]
         public string UserName { get; init; }
         [Required]
         public int Score { get; init; }

@@ -5,6 +5,7 @@ namespace Core.Models
     public class HighScoreListWriteModel
     {
         [Required]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "The {0} value must be between 3 and 50 characters.")]
         public string Name { get; init; }
         [Required]
         public bool LowIsBest { get; init; }
