@@ -16,7 +16,6 @@ namespace Infrastructure.Extensions
             });
 
             services            
-//                     .AddSingleton<IHighScoreRepository, FakeHighScoreRepository>()
                      .AddTransient<IHighScoreRepository, HighScoreRepository>()
                      .AddTransient<IMongoDBContext, MongoDBContext>()
             ;

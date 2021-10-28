@@ -33,9 +33,6 @@ namespace Infrastructure.Repositories
 
         public async Task AddGameResultToHighScoreList(string highScoreListId, GameResult gameResult)
         {
-            // TODO: Replace with testable logic in Core
-            // GameResultList
-
             var list = await GetHighScoreList(highScoreListId);
             if (list == null)
             {
