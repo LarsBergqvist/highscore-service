@@ -1,22 +1,24 @@
 ﻿using Core.Models;
 using Core.Repositories;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.Helpers;
 
-namespace Infrastructure.Repositories
+namespace Core.Tests
 {
     public class FakeHighScoreRepository : IHighScoreRepository
     {
-        private List<HighScoreListReadModel> _highScoreLists;
-        public FakeHighScoreRepository()
+        private readonly List<HighScoreListReadModel> _highScoreLists;
+        private readonly IGameResultHelper _gameResultHelper;
+        public FakeHighScoreRepository(IGameResultHelper gameResultHelper)
         {
+            _gameResultHelper = gameResultHelper;
             _highScoreLists = new List<HighScoreListReadModel>();
             _highScoreLists.Add(new HighScoreListReadModel(
                 "1",
-                "Sliding Image Puzzle 3x3 High Score List",
-                true, "Moves", 3
+                "My game",
+                true, "Moves", 10
                 )
             {
                 Results = new List<GameResult> {
@@ -36,20 +38,13 @@ namespace Infrastructure.Repositories
                 return Task.CompletedTask;
             }
 
-            var results = list.Results;
-            list.Results.Add(gameResult);
+            var newResults =
+                _gameResultHelper.GetSortedListWithNewResult(gameResult,
+                            list.Results,
+                            list.LowIsBest,
+                            list.MaxSize);
 
-            IList<GameResult> updatedResults;
-            if (list.LowIsBest)
-            {
-                updatedResults = results.Select(c => c).OrderBy(c => c.Score).Take(list.MaxSize).ToList();
-            }
-            else
-            {
-                updatedResults = results.Select(c => c).OrderByDescending(c => c.Score).Take(list.MaxSize).ToList();
-            }
-
-            list.Results = updatedResults;
+            list.Results = newResults;
             return Task.CompletedTask;
         }
 

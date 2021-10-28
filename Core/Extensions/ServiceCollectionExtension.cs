@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Core.Helpers;
 
 namespace Core.Extensions
 {
@@ -8,7 +9,8 @@ namespace Core.Extensions
         public static IServiceCollection AddCoreServices(this IServiceCollection services)
         {
             return services
-                      .AddMediatR(typeof(ServiceCollectionExtension));
+                      .AddScoped<IGameResultHelper, GameResultHelper>()
+                      .AddMediatR(typeof(ServiceCollectionExtension))
             ;
         }
     }

@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Core.Helpers;
+using Core.Models;
 using Core.Repositories;
 using Core.Settings;
 using Infrastructure.MongoDB;
@@ -18,46 +19,41 @@ namespace Infrastructure.Repositories
         private readonly IMongoDBContext _mongoDBContext;
         private readonly RepositorySettings _settings;
         private readonly ILogger<HighScoreRepository> _logger;
-        public HighScoreRepository(ILogger<HighScoreRepository> logger, IOptions<RepositorySettings> options, IMongoDBContext mongoDBContext)
+        private readonly IGameResultHelper _gameResultHelper;
+        public HighScoreRepository(ILogger<HighScoreRepository> logger,
+                                    IOptions<RepositorySettings> options,
+                                    IMongoDBContext mongoDBContext,
+                                    IGameResultHelper gameResultHelper)
         {
             _logger = logger;
             _settings = options.Value;
             _mongoDBContext = mongoDBContext;
+            _gameResultHelper = gameResultHelper;
         }
 
         public async Task AddGameResultToHighScoreList(string highScoreListId, GameResult gameResult)
         {
+            // TODO: Replace with testable logic in Core
+            // GameResultList
+
             var list = await GetHighScoreList(highScoreListId);
             if (list == null)
             {
                 return;
             }
 
-            gameResult.UtcDateTime = DateTime.Now.ToUniversalTime();
-            gameResult.Id ??= Guid.NewGuid().ToString();
-
-            //
-            // Add the new result and create a new sorted result list limited to MaxSize
-            //
-            var results = list.Results;
-            list.Results.Add(gameResult);
-
-            IList<GameResult> updatedResults;
-            if (list.LowIsBest)
-            {
-                updatedResults = results.Select(c => c).OrderBy(c => c.Score).ThenByDescending(c => c.UtcDateTime).Take(list.MaxSize).ToList();
-            }
-            else
-            {
-                updatedResults = results.Select(c => c).OrderByDescending(c => c.Score).ThenByDescending(c => c.UtcDateTime).Take(list.MaxSize).ToList();
-            }
-
-            list.Results = updatedResults;
+            var newResults = _gameResultHelper.GetSortedListWithNewResult(gameResult,
+                                                                            list.Results,
+                                                                            list.LowIsBest,
+                                                                            list.MaxSize);
+            list.Results = newResults;
 
             try
             {
-                var dbModel = new HighScoreListDBModel(new ObjectId(list.Id), list.Name, list.LowIsBest, list.Unit, list.MaxSize);
-                dbModel.Results = list.Results;
+                var dbModel = new HighScoreListDBModel(new ObjectId(list.Id), list.Name, list.LowIsBest, list.Unit, list.MaxSize)
+                {
+                    Results = list.Results
+                };
                 var collection = GetCollection();
                 var filter = Builders<HighScoreListDBModel>.Filter.Eq("_id", dbModel.Id);
                 var replaceOptions = new ReplaceOptions
@@ -78,7 +74,7 @@ namespace Infrastructure.Repositories
             var collection = GetCollection();
             var objId = ObjectId.GenerateNewId();
             var dbModel = new HighScoreListDBModel(objId, input.Name, input.LowIsBest, input.Unit, input.MaxSize);
-                await collection.InsertOneAsync(dbModel);
+            await collection.InsertOneAsync(dbModel);
 
             var highScoreList = new HighScoreListReadModel(objId.ToString(), input.Name, input.LowIsBest, input.Unit, input.MaxSize);
 

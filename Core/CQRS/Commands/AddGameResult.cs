@@ -10,7 +10,6 @@ namespace Core.CQRS.Commands
     {
         public class Response
         {
-            public int? PositionInList { get; init; }
             public bool NoMatchingListId { get; init; }
         }
 
