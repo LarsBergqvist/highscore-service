@@ -7,7 +7,7 @@ trigger:
   branches:
     include:
     - main
-    - net6-upgrade
+    - feature/*
 
 pool:
   vmImage: "windows-latest"
