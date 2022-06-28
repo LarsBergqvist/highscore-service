@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using Core.Models;
 
-namespace Core.Helpers
+namespace Core.Helpers;
+
+public interface IGameResultHelper
 {
-    public interface IGameResultHelper
-    {
-        IList<GameResult> GetSortedListWithNewResult(GameResult newResult, IList<GameResult> oldResults, bool lowIsBest, int maxSize);
-    }
+    IList<GameResult> GetSortedListWithNewResult(GameResult newResult, IEnumerable<GameResult> oldResults, bool lowIsBest, int maxSize);
 }

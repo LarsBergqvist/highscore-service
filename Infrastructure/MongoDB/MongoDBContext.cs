@@ -2,26 +2,24 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace Infrastructure.MongoDB
-{
+namespace Infrastructure.MongoDB;
 
-    public interface IMongoDBContext
+public interface IMongoDBContext
+{
+    IMongoCollection<T> GetCollection<T>(string name);
+}
+
+public class MongoDBContext : IMongoDBContext
+{
+    private readonly IMongoDatabase _db;
+    public MongoDBContext(IOptions<RepositorySettings> options)
     {
-        IMongoCollection<T> GetCollection<T>(string name);
+        var mongoClient = new MongoClient(options.Value.ConnectionString);
+        _db = mongoClient.GetDatabase(options.Value.HighScoresDBName);
     }
 
-    public class MongoDBContext : IMongoDBContext
+    public IMongoCollection<T> GetCollection<T>(string name)
     {
-        private readonly IMongoDatabase _db;
-        public MongoDBContext(IOptions<RepositorySettings> options)
-        {
-            var mongoClient = new MongoClient(options.Value.ConnectionString);
-            _db = mongoClient.GetDatabase(options.Value.HighScoresDBName);
-        }
-
-        public IMongoCollection<T> GetCollection<T>(string name)
-        {
-            return _db.GetCollection<T>(name);
-        }
+        return _db.GetCollection<T>(name);
     }
 }

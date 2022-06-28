@@ -3,37 +3,36 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 
-namespace Api.Middleware
+namespace Api.Middleware;
+
+public class ApiKeyMiddleware
 {
-    public class ApiKeyMiddleware
+    private readonly RequestDelegate _next;
+    private const string Apikeyname = "ApiKey";
+    public ApiKeyMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-        private const string APIKEYNAME = "ApiKey";
-        public ApiKeyMiddleware(RequestDelegate next)
+        _next = next;
+    }
+    public async Task InvokeAsync(HttpContext context)
+    {
+        if (!context.Request.Headers.TryGetValue(Apikeyname, out var extractedApiKey))
         {
-            _next = next;
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync("ApiKey was not provided.");
+            return;
         }
-        public async Task InvokeAsync(HttpContext context)
+
+        var appSettings = context.RequestServices.GetRequiredService<IConfiguration>();
+
+        var apiKey = appSettings.GetValue<string>(Apikeyname);
+
+        if (!apiKey.Equals(extractedApiKey))
         {
-            if (!context.Request.Headers.TryGetValue(APIKEYNAME, out var extractedApiKey))
-            {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                await context.Response.WriteAsync("ApiKey was not provided.");
-                return;
-            }
-
-            var appSettings = context.RequestServices.GetRequiredService<IConfiguration>();
-
-            var apiKey = appSettings.GetValue<string>(APIKEYNAME);
-
-            if (!apiKey.Equals(extractedApiKey))
-            {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                await context.Response.WriteAsync("Unauthorized.");
-                return;
-            }
-
-            await _next(context);
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync("Unauthorized.");
+            return;
         }
+
+        await _next(context);
     }
 }

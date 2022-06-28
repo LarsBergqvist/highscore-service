@@ -2,16 +2,15 @@
 using Microsoft.Extensions.DependencyInjection;
 using Core.Helpers;
 
-namespace Core.Extensions
+namespace Core.Extensions;
+
+public static class ServiceCollectionExtension
 {
-    public static class ServiceCollectionExtension
+    public static IServiceCollection AddCoreServices(this IServiceCollection services)
     {
-        public static IServiceCollection AddCoreServices(this IServiceCollection services)
-        {
-            return services
-                      .AddScoped<IGameResultHelper, GameResultHelper>()
-                      .AddMediatR(typeof(ServiceCollectionExtension))
+        return services
+                .AddScoped<IGameResultHelper, GameResultHelper>()
+                .AddMediatR(typeof(ServiceCollectionExtension))
             ;
-        }
     }
 }
