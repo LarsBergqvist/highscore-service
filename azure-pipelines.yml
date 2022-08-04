@@ -8,6 +8,7 @@ trigger:
     include:
     - main
     - feature/*
+    - refactoring
 
 pool:
   vmImage: "windows-latest"
