@@ -183,6 +183,8 @@ namespace Infrastructure.Tests
         {
             var settings = new RepositorySettings
             {
+                ConnectionString = "connstring",
+                HighScoresDBName = "games",
                 HighScoresCollectionName = "highscores"
             };
             var logger = new NullLogger<HighScoreRepository>();
