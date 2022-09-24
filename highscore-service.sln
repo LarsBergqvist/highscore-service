@@ -20,6 +20,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Tests", "Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Tests", "Tests\Core.Tests\Core.Tests.csproj", "{67C0EE27-6B1F-44F8-988A-24CF050C31F1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HTTPClientTests", "HTTPClientTests", "{E969C625-8B65-4346-82DF-49B4793C7568}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\HTTPClientTests\http-client.env.json = Tests\HTTPClientTests\http-client.env.json
+		Tests\HTTPClientTests\RequestTests.http = Tests\HTTPClientTests\RequestTests.http
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +59,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{EFCD7434-A987-40DF-AF60-FB0526E0710A} = {13505660-473A-4D94-938F-BB447C87E3F7}
 		{67C0EE27-6B1F-44F8-988A-24CF050C31F1} = {13505660-473A-4D94-938F-BB447C87E3F7}
+		{E969C625-8B65-4346-82DF-49B4793C7568} = {13505660-473A-4D94-938F-BB447C87E3F7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BBC43F1-3932-4819-B45B-F23F5B643F0B}

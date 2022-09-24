@@ -1,0 +1,36 @@
+### Get all highscore lists
+GET {{apiendpoint}}/highscore-lists
+Accept: application/json
+
+> {% client.global.set("first_id", response.body[0].id); %}
+
+### Get a specific highscore list
+GET {{apiendpoint}}/highscore-lists/{{first_id}}
+Accept: application/json
+
+### Create a new highscore list
+POST {{apiendpoint}}/highscore-lists
+Content-Type: application/json
+
+{
+  "name": "New Game",
+  "lowIsBest": false,
+  "unit": "points",
+  "maxSize": 25
+}
+
+> {% client.global.set("created_id", response.body.id); %}
+
+### Add a game result to the new highscore list
+POST {{apiendpoint}}/highscore-lists/{{created_id}}/game-results
+Content-Type: application/json
+
+{
+  "userName": "Gamer",
+  "score": 42,
+  "utcDateTime": "2022-09-24T11:32:58.273Z"
+}
+
+### Get the new highscore list including the new game result
+GET {{apiendpoint}}/highscore-lists/{{created_id}}
+Accept: application/json
