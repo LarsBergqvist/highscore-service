@@ -80,14 +80,14 @@ public class Startup
 
         app.UseRouting();
 
+        app.UseCors(CorsPolicy);
+
         app.UseAuthorization();
 
 #if !DEBUG
             app.UseMiddleware<ApiKeyMiddleware>();
 #endif
-
-        app.UseCors(CorsPolicy);
-
+        
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
