@@ -12,7 +12,7 @@ namespace Api;
 
 public class Startup
 {
-    private const string CorsPolicy = "appCorsPolicy";
+    private readonly string _corsPolicy = "appCorsPolicy";
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
@@ -25,7 +25,7 @@ public class Startup
     {
         services.AddCors(options =>
         {
-            options.AddPolicy(CorsPolicy,
+            options.AddPolicy(_corsPolicy,
                 builder =>
                 {
                     builder.WithOrigins(Configuration["AllowedOrigins"].Split(";")).AllowAnyHeader().AllowAnyMethod();
@@ -73,14 +73,14 @@ public class Startup
 //                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1"));
         }
 
-        app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1"));
-
         app.UseHttpsRedirection();
 
+        app.UseSwagger();
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1"));
+        
         app.UseRouting();
 
-        app.UseCors(CorsPolicy);
+        app.UseCors(_corsPolicy);
 
 /*        app.UseAuthorization();
 
