@@ -41,6 +41,14 @@ public class HighScoreListsController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("calculatedposition/{id}/{score}")]
+    [ProducesResponseType(typeof(HighScoreListReadModel), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<HighScoreListReadModel>> GetCalculatedPositionInList(string id, int score)
+    {
+        var result = await _mediator.Send(new GetCalculatedPositionInList.Request(id, score));
+        return Ok(result);
+    }
+
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("{id}/game-results")]
